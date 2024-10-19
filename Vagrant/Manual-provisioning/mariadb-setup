@@ -1,0 +1,41 @@
+#update the yum repository 
+
+yum update -yum
+
+#installing the epel-release
+
+yum install epel-release -yum
+
+#installing git and mariadbserver
+
+yum install git mariadb-server
+
+#start and enable the mariadb server
+
+sudo systemctl start mariadb
+sudo systenctl enable mariadb
+
+
+#installing the mysql 
+
+mysql_secure_installation 
+
+#login into mysql
+
+mysql -u root -padmin123
+
+#create the database
+
+create database accounts;
+
+show databases;
+
+grant all privileges on accounts.* TO 'admin'@'%' identified by 'admi123';
+
+FLUSH PRIVILEGES;
+
+exit;
+
+
+
+
