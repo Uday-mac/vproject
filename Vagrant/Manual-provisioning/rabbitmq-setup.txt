@@ -1,0 +1,19 @@
+#installing the rabbitmq
+
+sudo yum update 
+
+sudo yum install epel-release 
+
+sudo yum install wget -y
+
+sudo yum install centos-release-rabbitmq-38
+
+sudo yum enablerepo=centos-rabbitmq-38 -y install rabbitmq-server
+
+sudo systenctl enable --now rabbitmq-server
+
+sudo sh -c 'echo "[{rabbit, [{loopback_users, []}]}]." > /etc/rabbitmq/rabbitmq.config
+
+sudo rabbitmqctl add_user test test
+
+sudo set_user_tags tets administrator 
