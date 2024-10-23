@@ -4,19 +4,19 @@ sudo apt update && apt upgrade
 
 sudo apt install nginx -y
 
-vim /etc/sites-available/vproapp
+vim /etc/nginx/sites-available/vproapp
 
 upstream vproapp {
     server app01:8080;
 }
 server {
-    listen 80;
-    location / {
-        proxy_pass http://vproapp
-    }
+  listen 80;
+location / {
+  proxy_pass http://vproapp;
+}
 }
 
-rm -rf /etc/sites-enabled/default
+rm -rf /etc/nginx/sites-enabled/default
 
-ln -s /etc/sites-available/vproapp /etc/sites-enabled/vproapp
+ln -s /etc/nginx/sites-available/vproapp /etc/nginx/sites-enabled/vproapp
 
