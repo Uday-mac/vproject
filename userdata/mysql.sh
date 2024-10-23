@@ -25,7 +25,7 @@ sudo mysql -u root -p"$DATABASE_PASS" -e "FLUSH PRIVILEGES"
 sudo mysql -u root -p"$DATABASE_PASS" -e "create database accounts"
 sudo mysql -u root -p"$DATABASE_PASS" -e "grant all privileges on account.* TO 'admin'@'localhots' IDENTIFIED BY'admin123'"
 sudo mysql -u root -p"$DATABASE_PASS" -e "grant all privileges on account.* TO 'admin'@'%' IDENTIFIED BY'admin123'"
-sudo mysql -u root -p"$DATABASE_PASS" -e "accounts < vproject/src/main/resources/db_backup.sq"
+sudo mysql -u root -p"$DATABASE_PASS" accounts < vproject/src/main/resources/db_backup.sq
 sudo mysql -u root -p"$DATABASE_PASS" -e "FLUSH PRIVILEGES"
 
 systemctl restart mariadb

@@ -1,25 +1,21 @@
 #!/bin/bash
 
-## primary RabbitMQ signing key
+# Import primary RabbitMQ signing keys
 rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc'
-## modern Erlang repository
 rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key'
-## RabbitMQ server repository
 rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key'
 
 cat <<EOT > /etc/yum.repos.d/rabbitmq.repo
 # In /etc/yum.repos.d/rabbitmq.repo
 
+#### Zero dependency Erlang RPM
 ##
-## Zero dependency Erlang RPM
-##
-
 [modern-erlang]
 name=modern-erlang-el9
 # Use a set of mirrors maintained by the RabbitMQ core team.
 # The mirrors have significantly higher bandwidth quotas.
-baseurl=https://yum1.rabbitmq.com/erlang/el/9/$basearch
-        https://yum2.rabbitmq.com/erlang/el/9/$basearch
+baseurl=https://yum1.rabbitmq.com/erlang/el/9/\$basearch
+        https://yum2.rabbitmq.com/erlang/el/9/\$basearch
 repo_gpgcheck=1
 enabled=1
 gpgkey=https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key
@@ -40,7 +36,7 @@ baseurl=https://yum1.rabbitmq.com/erlang/el/9/noarch
 repo_gpgcheck=1
 enabled=1
 gpgkey=https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key
-       https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc
+        https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc
 gpgcheck=1
 sslverify=1
 sslcacert=/etc/pki/tls/certs/ca-bundle.crt
@@ -58,7 +54,7 @@ baseurl=https://yum1.rabbitmq.com/erlang/el/9/SRPMS
 repo_gpgcheck=1
 enabled=1
 gpgkey=https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key
-       https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc
+        https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc
 gpgcheck=1
 sslverify=1
 sslcacert=/etc/pki/tls/certs/ca-bundle.crt
@@ -66,20 +62,17 @@ metadata_expire=300
 pkg_gpgcheck=1
 autorefresh=1
 
-
+#### RabbitMQ Server
 ##
-## RabbitMQ Server
-##
-
 [rabbitmq-el9]
 name=rabbitmq-el9
-baseurl=https://yum2.rabbitmq.com/rabbitmq/el/9/$basearch
-        https://yum1.rabbitmq.com/rabbitmq/el/9/$basearch
+baseurl=https://yum2.rabbitmq.com/rabbitmq/el/9/\$basearch
+        https://yum1.rabbitmq.com/rabbitmq/el/9/\$basearch
 repo_gpgcheck=1
 enabled=1
 # Cloudsmith's repository key and RabbitMQ package signing key
 gpgkey=https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key
-       https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc
+        https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc
 gpgcheck=1
 sslverify=1
 sslcacert=/etc/pki/tls/certs/ca-bundle.crt
@@ -96,7 +89,7 @@ repo_gpgcheck=1
 enabled=1
 # Cloudsmith's repository key and RabbitMQ package signing key
 gpgkey=https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key
-       https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc
+        https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc
 gpgcheck=1
 sslverify=1
 sslcacert=/etc/pki/tls/certs/ca-bundle.crt
@@ -112,7 +105,7 @@ baseurl=https://yum2.rabbitmq.com/rabbitmq/el/9/SRPMS
 repo_gpgcheck=1
 enabled=1
 gpgkey=https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key
-gpgcheck=0
+gpgcheck=1
 sslverify=1
 sslcacert=/etc/pki/tls/certs/ca-bundle.crt
 metadata_expire=300
@@ -121,23 +114,22 @@ autorefresh=1
 type=rpm-md
 EOT
 
+# Update package list
 sudo dnf update -y
 
-## install these dependencies from standard OS repositories
+# Install dependencies from standard OS repositories
 sudo dnf install -y socat logrotate
 
-## install RabbitMQ and zero dependency Erlang
+# Install RabbitMQ and zero dependency Erlang
 sudo dnf install -y erlang rabbitmq-server
 
+# Start and enable RabbitMQ server
 sudo systemctl start rabbitmq-server
 sudo systemctl enable rabbitmq-server
 
- sudo sh -c 'echo "[{rabbit, [{loopback_users, []}]}]." > /etc/rabbitmq/rabbitmq.config'
- sudo rabbitmqctl add_user test test
- sudo rabbitmqctl set_user_tags test administartor
- sudo rabbitmqctl set_permissions -p / test ".*" ".*" ".*"
-
- sudo systemctl restart rabbitmq-server
-
-
-
+# Configure RabbitMQ
+sudo bash -c 'echo "[{rabbit, [{loopback_users, []}]}]." > /etc/rabbitmq/rabbitmq.config'
+sudo rabbitmqctl add_user test test
+sudo rabbitmqctl set_user_tags test administrator
+sudo rabbitmqctl set_permissions -p / test ".*" ".*" ".*"
+sudo systemctl restart rabbitmq-server
