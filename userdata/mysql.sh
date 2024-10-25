@@ -21,11 +21,8 @@ sudo mysql -u root -p"$DATABASE_PASS" -e "DELETE FROM mysql.user WHERE User='roo
 sudo mysql -u root -p"$DATABASE_PASS" -e "DELETE FROM mysql.user WHERE User=''"
 sudo mysql -u root -p"$DATABASE_PASS" -e "DELETE FROM mysql.db WHERE Db='test' OR Db='test\_%'"
 sudo mysql -u root -p"$DATABASE_PASS" -e "FLUSH PRIVILEGES"
-
 sudo mysql -u root -p"$DATABASE_PASS" -e "create database accounts"
 sudo mysql -u root -p"$DATABASE_PASS" -e "grant all privileges on account.* TO 'admin'@'localhots' IDENTIFIED BY'admin123'"
 sudo mysql -u root -p"$DATABASE_PASS" -e "grant all privileges on account.* TO 'admin'@'%' IDENTIFIED BY'admin123'"
 sudo mysql -u root -p"$DATABASE_PASS" accounts < /tmp/vproject/src/main/resources/db_backup.sql
 sudo mysql -u root -p"$DATABASE_PASS" -e "FLUSH PRIVILEGES"
-
-systemctl restart mariadb
