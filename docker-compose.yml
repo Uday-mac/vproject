@@ -1,0 +1,52 @@
+version: '3.8'
+services:
+  vprodb:
+    build:
+      context: ./Docker-files/db/
+      dockerfile: Dockerfile
+    image: udaymac/vproject-db
+    container_name: vprodb
+    ports:
+      - 3306:3306
+    volumes:
+      - vprodbdata:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD="admin123"
+
+  mem:
+    image: memcached:latest
+    ports:
+      - 11211:11211
+
+  rmq:
+    image: rabbitmq:latest
+    ports:
+      - 5672:5672
+
+  vpropp:
+    build:
+      context: ./Docker-files/app/
+      dockerfile: Dockerfile
+    image: udaymac/vproject-app
+    container_name: vprodb
+    ports:
+      - 8080:8080
+    volumes:
+      - vproappdata:/usr/local/tomcat/webapps/
+    depends_on:
+      - vprobd
+
+  vproweb:
+    build:
+      context: ./Docker-files/web/
+      dockerfile: Dockerfile
+    image: udaymac/vproject-web
+    container_name: vproweb
+    ports:
+      - 80:80 
+    depends_on:
+      - vproapp
+
+volumes:
+  vprodbdata: {}
+  vproappdata: {}
