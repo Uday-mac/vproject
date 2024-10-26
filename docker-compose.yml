@@ -26,18 +26,18 @@ services:
     ports:
       - 5672:5672
 
-  vpropp:
+  vproapp:
     build:
       context: ./Docker-files/app/
       dockerfile: Dockerfile
     image: udaymac/vproject-app
-    container_name: vprodb
+    container_name: vproapp
     ports:
       - 8080:8080
     volumes:
       - vproappdata:/usr/local/tomcat/webapps/
     depends_on:
-      - vprobd
+      - vprodb
 
   vproweb:
     build:
